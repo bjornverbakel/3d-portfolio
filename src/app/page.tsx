@@ -1,7 +1,60 @@
 "use client";
 
+import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Grid } from "@react-three/drei";
+import { OrbitControls, Grid, Line, Html } from "@react-three/drei";
+
+type Vec3 = [number, number, number];
+
+function AxisArrow({
+  from = [0, 0, 0] as Vec3,
+  to = [1, 0, 0] as Vec3,
+  color = "#ff0000",
+  lineWidth = 4,
+  label,
+  labelDistance = 2, // distance from 'from' position
+}: {
+  from?: Vec3;
+  to?: Vec3;
+  color?: string;
+  lineWidth?: number;
+  label?: string;
+  labelDistance?: number;
+}) {
+  // Calculate direction vector
+  const dir = [
+    to[0] - from[0],
+    to[1] - from[1],
+    to[2] - from[2],
+  ];
+  const len = Math.sqrt(dir[0] ** 2 + dir[1] ** 2 + dir[2] ** 2);
+  const norm = len === 0 ? [0, 0, 0] : [dir[0] / len, dir[1] / len, dir[2] / len];
+
+  // Position label exactly 'labelDistance' units from 'from' in the direction of the axis
+  const labelPos: Vec3 = [
+    from[0] + norm[0] * labelDistance,
+    from[1] + norm[1] * labelDistance,
+    from[2] + norm[2] * labelDistance,
+  ];
+
+  // Compute quaternion to rotate Y axis to the direction vector
+  const quaternion = new THREE.Quaternion();
+  quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0), // Y axis
+    new THREE.Vector3(...norm)
+  );
+
+  return (
+    <>
+      <Line points={[from, to]} color={color} lineWidth={lineWidth} />
+      <Html position={labelPos} center quaternion={quaternion}>
+        <div style={{ color, fontWeight: "bold", fontSize: 18 }}>
+          {label}
+        </div>
+      </Html>
+    </>
+  );
+}
 
 export default function App() {
   return (
@@ -11,6 +64,10 @@ export default function App() {
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="#6C67FF" />
       </mesh>
+      {/* Gizmo lines/arrows with 2D labels */}
+      <AxisArrow from={[0, 0, 0]} to={[4, 0, 0]} color="#ff0000" label="Projects" />
+      <AxisArrow from={[0, 0, 0]} to={[0, 4, 0]} color="#00ff00" label="Contact" />
+      <AxisArrow from={[0, 0, 0]} to={[0, 0, 4]} color="#0000ff" label="Projects" />
       {/* Grid helper */}
       <Grid
         position={[0, 0, 0]}
