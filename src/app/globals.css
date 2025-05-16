@@ -4,7 +4,7 @@
 :root {
   --color-primary: #6C67FF;
   --color-secondary: #FF6C67;
-  --color-accent: #67FF6C;
+  --color-accent: #00FF00;
   --color-background: #161616;
   --color-text: #D7D7D7;  
 }
@@ -19,4 +19,11 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+.axis-label {
+  font-weight: bold;
+  font-size: 3em;
+  white-space: nowrap;
+  cursor: pointer;
 }

@@ -11,12 +11,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`h-full ${martianMono.className}`}>
-        <div className="h-full relative">
+      <body className={`h-full`}>
+        <div className={`h-full relative ${martianMono.className}`}>
           {/* Overlay UI */}
-          <div className="absolute top-8 left-8">
+          <h1 className={`absolute top-8 left-8 font-bold text-6xl`}>
             BJORN VERBAKEL
-          </div>
+          </h1>
           {/* 3D */}
           {children}
         </div>

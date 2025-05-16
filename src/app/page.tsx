@@ -1,9 +1,10 @@
 "use client";
 
+import "./globals.css";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Grid, Line, Html } from "@react-three/drei";
 import * as THREE from "three";
-import { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 type Vec3 = [number, number, number];
 
@@ -13,8 +14,8 @@ function AxisArrow({
   color,
   lineWidth = 10, // Line width
   label,
-  labelDistance = 2, // Text distance from cube
-  labelOffset = 40, // Text offset from line
+  labelDistance = 0, // Text distance from cube
+  labelOffset = 0, // Text offset from line
 }: {
   from?: Vec3;
   to?: Vec3;
@@ -25,16 +26,14 @@ function AxisArrow({
   labelOffset?: number;
 }) {
   const { camera, size } = useThree();
+  const [hovered, setHovered] = useState(false);
 
   // Calculate direction vector
-  const dir = [
-    to[0] - from[0],
-    to[1] - from[1],
-    to[2] - from[2],
-  ];
+  const dir = [to[0] - from[0], to[1] - from[1], to[2] - from[2]];
 
   const len = Math.sqrt(dir[0] ** 2 + dir[1] ** 2 + dir[2] ** 2);
-  const norm = len === 0 ? [0, 0, 0] : [dir[0] / len, dir[1] / len, dir[2] / len];
+  const norm =
+    len === 0 ? [0, 0, 0] : [dir[0] / len, dir[1] / len, dir[2] / len];
 
   // Position label exactly 'labelDistance' units from 'from' in the direction of the axis
   const labelPos3D: Vec3 = [
@@ -62,10 +61,14 @@ function AxisArrow({
     const dy = y2 - y1;
     const perp = [-dy, dx];
     const perpLen = Math.sqrt(perp[0] ** 2 + perp[1] ** 2);
-    const perpNorm = perpLen === 0 ? [0, 0] : [perp[0] / perpLen, perp[1] / perpLen];
+    const perpNorm =
+      perpLen === 0 ? [0, 0] : [perp[0] / perpLen, perp[1] / perpLen];
 
     // Offset in screen space
-    const labelScreen = [x2 + perpNorm[0] * labelOffset, y2 + perpNorm[1] * labelOffset];
+    const labelScreen = [
+      x2 + perpNorm[0] * labelOffset,
+      y2 + perpNorm[1] * labelOffset,
+    ];
 
     // Unproject back to 3D
     const ndc = [
@@ -97,19 +100,25 @@ function AxisArrow({
 
   return (
     <>
-      <Line points={[from, to]} color={color} lineWidth={lineWidth} />
+      <Line
+      points={[from, to]}
+      color={hovered ? "#D7D7D7" : color}
+      lineWidth={lineWidth}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      />
       <Html position={labelPos} center>
-        <div
-          style={{
-            color,
-            fontWeight: "bold",
-            fontSize: "3em",
-            transform: `rotate(${angle}deg)`,
-            whiteSpace: "nowrap",
-          }}
-        >
-          {label}
-        </div>
+      <div
+        className="axis-label"
+        style={{
+        color: hovered ? "#D7D7D7" : color,
+        transform: `rotate(${angle}deg)`,
+        }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        {label}
+      </div>
       </Html>
     </>
   );
@@ -125,24 +134,31 @@ export default function App() {
       </mesh>
       {/* Gizmo lines/arrows with 2D labels */}
       {/* X axis - Red */}
-      <AxisArrow from={[0, 0.5, 0]} to={[4, 0.5, 0]} color="#FF4141" label="Contact" labelDistance={2} />
+      <AxisArrow
+        from={[0, 0.5, 0]}
+        to={[100, 0.5, 0]}
+        color="#FF4141"
+        label="Contact"
+        labelDistance={2}
+        labelOffset={45} // <-- custom offset for X
+      />
       {/* Y axis - Green */}
-      <AxisArrow from={[0, 0.5, 0]} to={[0, 4.5, 0]} color="#54FF87" label="About" labelDistance={1.5} />
+      <AxisArrow
+        from={[0, 0.5, 0]}
+        to={[0, 100 + 0.5, 0]}
+        color="#54FF87"
+        label="About"
+        labelDistance={1.5}
+        labelOffset={45} // <-- custom offset for Y
+      />
       {/* Z axis - Blue */}
-      <AxisArrow from={[0, 0.5, 0]} to={[0, 0.5, 4]} color="#4661FF" label="Projects" labelDistance={2.25} />
-      {/* Grid helper */}
-      <Grid
-        position={[0, 0, 0]}
-        args={[10, 10]}
-        cellSize={1}
-        cellThickness={1}
-        cellColor="#6f6f6f"
-        sectionSize={5}
-        sectionThickness={1.5}
-        sectionColor="#737373"
-        fadeDistance={25}
-        fadeStrength={1}
-        infiniteGrid={true}
+      <AxisArrow
+        from={[0, 0.5, 0]}
+        to={[0, 0.5, 100]}
+        color="#4661FF"
+        label="Projects"
+        labelDistance={2.25}
+        labelOffset={50} // <-- custom offset for Z
       />
       {/* Lighting */}
       <ambientLight intensity={1} />
