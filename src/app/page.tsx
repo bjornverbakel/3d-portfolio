@@ -48,7 +48,7 @@ function AxisArrow({
     <>
       <Line points={[from, to]} color={color} lineWidth={lineWidth} />
       <Html position={labelPos} center quaternion={quaternion}>
-        <div style={{ color, fontWeight: "bold", fontSize: 18 }}>
+        <div style={{ color, fontWeight: "bold", fontSize: 32 }}>
           {label}
         </div>
       </Html>
@@ -60,17 +60,17 @@ export default function App() {
   return (
     <Canvas camera={{ position: [5, 5, 5], fov: 50 }}>
       {/* Cube */}
-      <mesh position={[0, 0, 0]}>
+      <mesh position={[0, .5, 0]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="#ffffff" />
       </mesh>
       {/* Gizmo lines/arrows with 2D labels */}
       {/* X axis - Red */}
-      <AxisArrow from={[0, 0, 0]} to={[4, 0, 0]} color="#FF4141" label="Projects" />
+      <AxisArrow from={[0, .5, 0]} to={[4, .5, 0]} color="#FF4141" label="Projects" />
       {/* Y axis - Green */}
-      <AxisArrow from={[0, 0, 0]} to={[0, 4, 0]} color="#54FF87" label="Contact" />
+      <AxisArrow from={[0, .5, 0]} to={[0, 4.5, 0]} color="#54FF87" label="Contact" />
       {/* Z axis - Blue */}
-      <AxisArrow from={[0, 0, 0]} to={[0, 0, 4]} color="#4661FF" label="Projects" />
+      <AxisArrow from={[0, .5, 0]} to={[0, .5, 4]} color="#4661FF" label="Projects" />
       {/* Grid helper */}
       <Grid
         position={[0, 0, 0]}

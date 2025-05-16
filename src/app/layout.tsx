@@ -1,4 +1,8 @@
 import "./globals.css";
+import localFont from "next/font/local";
+
+const titania = localFont({ src: "../fonts/Titania.ttf" });
+const martianMono = localFont({ src: "../fonts/MartianMono.ttf" });
 
 export default function RootLayout({
   children,
@@ -7,8 +11,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full">
-        {children}
+      <body className={`h-full ${martianMono.className}`}>
+        <div className="h-full">{children}</div>
       </body>
     </html>
   );
