@@ -12,7 +12,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`h-full ${martianMono.className}`}>
-        <div className="h-full">{children}</div>
+        <div className="h-full relative">
+          {/* Overlay UI */}
+          <div className="absolute top-8 left-8">
+            BJORN VERBAKEL
+          </div>
+          {/* 3D */}
+          {children}
+        </div>
       </body>
     </html>
   );
