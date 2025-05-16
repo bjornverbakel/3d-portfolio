@@ -127,7 +127,7 @@ function AxisArrow({
 
 export default function App() {
   return (
-    <Canvas camera={{ position: [4, 2, 3], fov: 50 }}>
+    <Canvas camera={{ position: [3, 2, 3], fov: 50 }}>
       {/* Cube */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1, 1, 1]} />
@@ -140,7 +140,7 @@ export default function App() {
         to={[100, 0, 0]}
         color="#FF4141"
         label="Contact"
-        labelDistance={2}
+        labelDistance={1.60}
         labelOffset={45} // <-- custom offset for X
       />
       {/* Y axis - Green */}
@@ -149,7 +149,7 @@ export default function App() {
         to={[0, 100, 0]}
         color="#54FF87"
         label="About"
-        labelDistance={1.5}
+        labelDistance={1.25}
         labelOffset={45} // <-- custom offset for Y
       />
       {/* Z axis - Blue */}
@@ -158,7 +158,7 @@ export default function App() {
         to={[0, 0, 100]}
         color="#8A9BFF"
         label="Projects"
-        labelDistance={1.75}
+        labelDistance={1.60}
         labelOffset={50} // <-- custom offset for Z
       />
       {/* Grid helper */}
