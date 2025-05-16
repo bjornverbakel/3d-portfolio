@@ -5,8 +5,8 @@
   --color-primary: #6C67FF;
   --color-secondary: #FF6C67;
   --color-accent: #67FF6C;
-  --color-background: #555555;
-  --color-text: #737373;  
+  --color-background: #161616;
+  --color-text: #D7D7D7;  
 }
 
 html, body, #__next {

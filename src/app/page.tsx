@@ -9,8 +9,8 @@ type Vec3 = [number, number, number];
 function AxisArrow({
   from = [0, 0, 0] as Vec3,
   to = [1, 0, 0] as Vec3,
-  color = "#ff0000",
-  lineWidth = 4,
+  color = "#ffffff",
+  lineWidth = 5,
   label,
   labelDistance = 2, // distance from 'from' position
 }: {
@@ -62,12 +62,15 @@ export default function App() {
       {/* Cube */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#6C67FF" />
+        <meshStandardMaterial color="#ffffff" />
       </mesh>
       {/* Gizmo lines/arrows with 2D labels */}
-      <AxisArrow from={[0, 0, 0]} to={[4, 0, 0]} color="#ff0000" label="Projects" />
-      <AxisArrow from={[0, 0, 0]} to={[0, 4, 0]} color="#00ff00" label="Contact" />
-      <AxisArrow from={[0, 0, 0]} to={[0, 0, 4]} color="#0000ff" label="Projects" />
+      {/* X axis - Red */}
+      <AxisArrow from={[0, 0, 0]} to={[4, 0, 0]} color="#FF4141" label="Projects" />
+      {/* Y axis - Green */}
+      <AxisArrow from={[0, 0, 0]} to={[0, 4, 0]} color="#54FF87" label="Contact" />
+      {/* Z axis - Blue */}
+      <AxisArrow from={[0, 0, 0]} to={[0, 0, 4]} color="#4661FF" label="Projects" />
       {/* Grid helper */}
       <Grid
         position={[0, 0, 0]}
