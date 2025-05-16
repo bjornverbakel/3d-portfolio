@@ -2,7 +2,7 @@
 
 import "./globals.css";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, Grid, Line, Html } from "@react-three/drei";
+import { Grid, Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import React, { useMemo, useState } from "react";
 
@@ -101,24 +101,25 @@ function AxisArrow({
   return (
     <>
       <Line
-      points={[from, to]}
-      color={hovered ? "#D7D7D7" : color}
-      lineWidth={lineWidth}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-      />
-      <Html position={labelPos} center>
-      <div
-        className="axis-label"
-        style={{
-        color: hovered ? "#D7D7D7" : color,
-        transform: `rotate(${angle}deg)`,
-        }}
+        points={[from, to]}
+        color={hovered ? "#D7D7D7" : color}
+        lineWidth={lineWidth}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-      >
-        {label}
-      </div>
+        toneMapped={false}
+      />
+      <Html position={labelPos} center>
+        <div
+          className="axis-label"
+          style={{
+            color: hovered ? "#D7D7D7" : color,
+            transform: `rotate(${angle}deg)`,
+          }}
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+        >
+          {label}
+        </div>
       </Html>
     </>
   );
@@ -126,17 +127,17 @@ function AxisArrow({
 
 export default function App() {
   return (
-    <Canvas camera={{ position: [4, 3, 5], fov: 50 }}>
+    <Canvas camera={{ position: [4, 2, 3], fov: 50 }}>
       {/* Cube */}
-      <mesh position={[0, 0.5, 0]}>
+      <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="#ffffff" />
       </mesh>
       {/* Gizmo lines/arrows with 2D labels */}
       {/* X axis - Red */}
       <AxisArrow
-        from={[0, 0.5, 0]}
-        to={[100, 0.5, 0]}
+        from={[0, 0, 0]}
+        to={[100, 0, 0]}
         color="#FF4141"
         label="Contact"
         labelDistance={2}
@@ -144,8 +145,8 @@ export default function App() {
       />
       {/* Y axis - Green */}
       <AxisArrow
-        from={[0, 0.5, 0]}
-        to={[0, 100 + 0.5, 0]}
+        from={[0, 0, 0]}
+        to={[0, 100, 0]}
         color="#54FF87"
         label="About"
         labelDistance={1.5}
@@ -153,13 +154,29 @@ export default function App() {
       />
       {/* Z axis - Blue */}
       <AxisArrow
-        from={[0, 0.5, 0]}
-        to={[0, 0.5, 100]}
-        color="#4661FF"
+        from={[0, 0, 0]}
+        to={[0, 0, 100]}
+        color="#8A9BFF"
         label="Projects"
-        labelDistance={2.25}
+        labelDistance={1.75}
         labelOffset={50} // <-- custom offset for Z
       />
+      {/* Grid helper */}
+      {/*
+      <Grid
+        position={[0, -0.5, 0]}
+        args={[10, 10]}
+        cellSize={1}
+        cellThickness={1}
+        cellColor="#6f6f6f"
+        sectionSize={5}
+        sectionThickness={1.5}
+        sectionColor="#737373"
+        fadeDistance={25}
+        fadeStrength={1}
+        infiniteGrid={true}
+      />
+      */}
       {/* Lighting */}
       <ambientLight intensity={1} />
       <directionalLight position={[2.5, 10, 5]} intensity={1} />

@@ -2,9 +2,9 @@
 
 /* Color variables */
 :root {
-  --color-primary: #6C67FF;
-  --color-secondary: #FF6C67;
-  --color-accent: #00FF00;
+  --color-blue: #8A9BFF;
+  --color-red: #FF4141;
+  --color-green: #54FF87;
   --color-background: #161616;
   --color-text: #D7D7D7;  
 }
@@ -26,4 +26,34 @@ body {
   font-size: 3em;
   white-space: nowrap;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none
+}
+
+h2 {
+cursor: text;
+}
+
+nav p {
+  cursor: pointer;
+  width: fit-content;
+}
+
+nav p:hover::before {
+  content: '>';
+  width: 100%;
+  left: 0;
+  margin-right: 2px;
+}
+
+nav p:nth-child(1):hover {
+  color: var(--color-green);
+}
+
+nav p:nth-child(2):hover {
+  color: var(--color-blue);
+}
+
+nav p:nth-child(3):hover {
+  color: var(--color-red);
 }
