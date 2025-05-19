@@ -11,12 +11,7 @@ import {
   Environment,
 } from "@react-three/drei";
 import { EffectComposer, Outline } from "@react-three/postprocessing";
-import {
-  Selection,
-  Select,
-  Bloom,
-  Noise,
-} from "@react-three/postprocessing";
+import { Selection, Select, Bloom, Noise } from "@react-three/postprocessing";
 import * as THREE from "three";
 import React, { useMemo, useState, useRef, useEffect } from "react";
 
@@ -191,29 +186,25 @@ function AxisArrow({
 
 export default function App() {
   return (
-    <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
+    <Canvas camera={{ position: [3, 2, 3], fov: 50 }}>
       <fog attach="fog" args={["#161616", 10, 18]} />
 
       {/* Cube with outline */}
-      <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
+      <mesh position={[0, -0.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial
-          color="#ffffff"
-          roughness={0}
-          metalness={0.2}
-        />
+        <meshStandardMaterial color="#ffffff" roughness={0} metalness={0.2} />
         {/* Gizmo lines/arrows with 2D labels */}
         <AxisArrow
           from={[0, 0, 0]}
-          to={[100, 0, 0]}
+          to={[2, 0, 0]}
           color="#FF4141"
           label="Contact"
-          labelDistance={1.6}
+          labelDistance={1.4}
           labelOffset={45}
         />
         <AxisArrow
           from={[0, 0, 0]}
-          to={[0, 100, 0]}
+          to={[0, 2, 0]}
           color="#54FF87"
           label="About"
           labelDistance={1.25}
@@ -221,16 +212,16 @@ export default function App() {
         />
         <AxisArrow
           from={[0, 0, 0]}
-          to={[0, 0, 100]}
+          to={[0, 0, 2]}
           color="#8A9BFF"
           label="Projects"
-          labelDistance={1.6}
+          labelDistance={1.4}
           labelOffset={50}
         />
       </mesh>
 
       {/* Reflective ground */}
-      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, -0.75, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[50, 50]} />
         <MeshReflectorMaterial
           blur={[400, 100]}
@@ -247,10 +238,7 @@ export default function App() {
 
       {/* Effects */}
       <EffectComposer>
-        <Bloom
-          intensity={0.1}
-          luminanceThreshold={0.4}
-        />
+        <Bloom intensity={0.1} luminanceThreshold={0.4} />
         <Noise opacity={0.02} />
       </EffectComposer>
 
@@ -264,6 +252,22 @@ export default function App() {
         distance={20}
         castShadow
       />
+      {/* Grid helper */}
+      
+      <Grid
+        position={[0, -0.74, 0]}
+        args={[10, 10]}
+        cellSize={1}
+        cellThickness={1}
+        cellColor="#6f6f6f"
+        sectionSize={5}
+        sectionThickness={1.5}
+        sectionColor="#737373"
+        fadeDistance={25}
+        fadeStrength={1}
+        infiniteGrid={true}
+      />
+     
 
       <OrbitControls />
     </Canvas>
