@@ -192,75 +192,67 @@ function AxisArrow({
 export default function App() {
   return (
     <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
-      {/* Fog: color, near, far */}
       <fog attach="fog" args={["#161616", 10, 18]} />
 
-      <Selection>
-        {/* Cube with outline */}
-        <Select enabled>
-          <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial
-              color="#ffffff" // or any accent color you want
-              roughness={0} // low roughness for shiny look
-              metalness={0.2} // high metalness for reflectivity
-            />
-            {/* Gizmo lines/arrows with 2D labels */}
-            {/* X axis - Red */}
-            <AxisArrow
-              from={[0, 0, 0]}
-              to={[100, 0, 0]}
-              color="#FF4141"
-              label="Contact"
-              labelDistance={1.6}
-              labelOffset={45} // <-- custom offset for X
-            />
-            {/* Y axis - Green */}
-            <AxisArrow
-              from={[0, 0, 0]}
-              to={[0, 100, 0]}
-              color="#54FF87"
-              label="About"
-              labelDistance={1.25}
-              labelOffset={45} // <-- custom offset for Y
-            />
-            {/* Z axis - Blue */}
-            <AxisArrow
-              from={[0, 0, 0]}
-              to={[0, 0, 100]}
-              color="#8A9BFF"
-              label="Projects"
-              labelDistance={1.6}
-              labelOffset={50} // <-- custom offset for Z
-            />
-          </mesh>
-        </Select>
+      {/* Cube with outline */}
+      <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial
+          color="#ffffff"
+          roughness={0}
+          metalness={0.2}
+        />
+        {/* Gizmo lines/arrows with 2D labels */}
+        <AxisArrow
+          from={[0, 0, 0]}
+          to={[100, 0, 0]}
+          color="#FF4141"
+          label="Contact"
+          labelDistance={1.6}
+          labelOffset={45}
+        />
+        <AxisArrow
+          from={[0, 0, 0]}
+          to={[0, 100, 0]}
+          color="#54FF87"
+          label="About"
+          labelDistance={1.25}
+          labelOffset={45}
+        />
+        <AxisArrow
+          from={[0, 0, 0]}
+          to={[0, 0, 100]}
+          color="#8A9BFF"
+          label="Projects"
+          labelDistance={1.6}
+          labelOffset={50}
+        />
+      </mesh>
 
-        {/* Reflective ground */}
-        <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[50, 50]} />
-          <MeshReflectorMaterial
-            blur={[400, 100]}
-            resolution={1024}
-            mixBlur={1}
-            mixStrength={28}
-            depthScale={0.5}
-            minDepthThreshold={0.85}
-            color="#161616"
-            metalness={0.8}
-            roughness={1}
-          />
-        </mesh>
+      {/* Reflective ground */}
+      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[50, 50]} />
+        <MeshReflectorMaterial
+          blur={[400, 100]}
+          resolution={1024}
+          mixBlur={1}
+          mixStrength={28}
+          depthScale={0.5}
+          minDepthThreshold={0.85}
+          color="#161616"
+          metalness={0.8}
+          roughness={1}
+        />
+      </mesh>
 
-        {/* Effects */}
-        <EffectComposer>
-          <Bloom
-            intensity={0.1} // The bloom intensity.
-            luminanceThreshold={0.4} // luminance threshold. Raise this value to mask out darker elements in the scene.
-          />
-          <Noise opacity={0.02} />
-        </EffectComposer>
-      </Selection>
+      {/* Effects */}
+      <EffectComposer>
+        <Bloom
+          intensity={0.1}
+          luminanceThreshold={0.4}
+        />
+        <Noise opacity={0.02} />
+      </EffectComposer>
 
       <Environment preset="dawn" />
 
