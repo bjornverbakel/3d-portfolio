@@ -2,11 +2,46 @@
 
 import "./globals.css";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Grid, Line, Html } from "@react-three/drei";
+import {
+  Grid,
+  Line,
+  Html,
+  OrbitControls,
+  MeshReflectorMaterial,
+  Environment,
+} from "@react-three/drei";
+import { EffectComposer, Outline } from "@react-three/postprocessing";
+import {
+  Selection,
+  Select,
+  Bloom,
+  Noise,
+} from "@react-three/postprocessing";
 import * as THREE from "three";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 
 type Vec3 = [number, number, number];
+
+function lerpColor(a: string, b: string, t: number) {
+  // a, b: hex strings like "#FF0000"
+  const ah = a.replace("#", "");
+  const bh = b.replace("#", "");
+  const ar = parseInt(ah.substring(0, 2), 16);
+  const ag = parseInt(ah.substring(2, 4), 16);
+  const ab = parseInt(ah.substring(4, 6), 16);
+  const br = parseInt(bh.substring(0, 2), 16);
+  const bg = parseInt(bh.substring(2, 4), 16);
+  const bb = parseInt(bh.substring(4, 6), 16);
+  const rr = Math.round(ar + (br - ar) * t);
+  const rg = Math.round(ag + (bg - ag) * t);
+  const rb = Math.round(ab + (bb - ab) * t);
+  return (
+    "#" +
+    rr.toString(16).padStart(2, "0") +
+    rg.toString(16).padStart(2, "0") +
+    rb.toString(16).padStart(2, "0")
+  );
+}
 
 function AxisArrow({
   from = [0, 0, 0] as Vec3, // Line start point
@@ -27,6 +62,35 @@ function AxisArrow({
 }) {
   const { camera, size } = useThree();
   const [hovered, setHovered] = useState(false);
+  const [displayColor, setDisplayColor] = useState(color ?? "#ffffff");
+  const animRef = useRef<number>();
+
+  useEffect(() => {
+    let frame: number;
+    let start: number | null = null;
+    const fromColor = displayColor; // Start from the current displayColor
+    const toColor = hovered ? "#D7D7D7" : color ?? "#ffffff";
+    const duration = 200;
+
+    function animate(ts: number) {
+      if (start === null) start = ts;
+      const t = Math.min(1, (ts - start) / duration);
+      const interpolated = lerpColor(fromColor, toColor, t);
+      setDisplayColor(interpolated);
+      if (t < 1) {
+        frame = requestAnimationFrame(animate);
+        animRef.current = frame;
+      }
+    }
+
+    frame = requestAnimationFrame(animate);
+    animRef.current = frame;
+
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+    // Only depend on hovered and color!
+  }, [hovered, color]);
 
   // Calculate direction vector
   const dir = [to[0] - from[0], to[1] - from[1], to[2] - from[2]];
@@ -102,7 +166,7 @@ function AxisArrow({
     <>
       <Line
         points={[from, to]}
-        color={hovered ? "#D7D7D7" : color}
+        color={displayColor}
         lineWidth={lineWidth}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
@@ -112,7 +176,7 @@ function AxisArrow({
         <div
           className="axis-label"
           style={{
-            color: hovered ? "#D7D7D7" : color,
+            color: displayColor,
             transform: `rotate(${angle}deg)`,
           }}
           onPointerOver={() => setHovered(true)}
@@ -127,59 +191,89 @@ function AxisArrow({
 
 export default function App() {
   return (
-    <Canvas camera={{ position: [3, 2, 3], fov: 50 }}>
-      {/* Cube */}
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#ffffff" />
-      </mesh>
-      {/* Gizmo lines/arrows with 2D labels */}
-      {/* X axis - Red */}
-      <AxisArrow
-        from={[0, 0, 0]}
-        to={[100, 0, 0]}
-        color="#FF4141"
-        label="Contact"
-        labelDistance={1.60}
-        labelOffset={45} // <-- custom offset for X
+    <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
+      {/* Fog: color, near, far */}
+      <fog attach="fog" args={["#161616", 10, 18]} />
+
+      <Selection>
+        {/* Cube with outline */}
+        <Select enabled>
+          <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial
+              color="#ffffff" // or any accent color you want
+              roughness={0} // low roughness for shiny look
+              metalness={0.2} // high metalness for reflectivity
+            />
+            {/* Gizmo lines/arrows with 2D labels */}
+            {/* X axis - Red */}
+            <AxisArrow
+              from={[0, 0, 0]}
+              to={[100, 0, 0]}
+              color="#FF4141"
+              label="Contact"
+              labelDistance={1.6}
+              labelOffset={45} // <-- custom offset for X
+            />
+            {/* Y axis - Green */}
+            <AxisArrow
+              from={[0, 0, 0]}
+              to={[0, 100, 0]}
+              color="#54FF87"
+              label="About"
+              labelDistance={1.25}
+              labelOffset={45} // <-- custom offset for Y
+            />
+            {/* Z axis - Blue */}
+            <AxisArrow
+              from={[0, 0, 0]}
+              to={[0, 0, 100]}
+              color="#8A9BFF"
+              label="Projects"
+              labelDistance={1.6}
+              labelOffset={50} // <-- custom offset for Z
+            />
+          </mesh>
+        </Select>
+
+        {/* Reflective ground */}
+        <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <MeshReflectorMaterial
+            blur={[400, 100]}
+            resolution={1024}
+            mixBlur={1}
+            mixStrength={28}
+            depthScale={0.5}
+            minDepthThreshold={0.85}
+            color="#161616"
+            metalness={0.8}
+            roughness={1}
+          />
+        </mesh>
+
+        {/* Effects */}
+        <EffectComposer>
+          <Bloom
+            intensity={0.1} // The bloom intensity.
+            luminanceThreshold={0.4} // luminance threshold. Raise this value to mask out darker elements in the scene.
+          />
+          <Noise opacity={0.02} />
+        </EffectComposer>
+      </Selection>
+
+      <Environment preset="dawn" />
+
+      <spotLight
+        position={[0, 3, 0]}
+        angle={Math.PI / 6}
+        penumbra={1}
+        intensity={1}
+        distance={20}
+        castShadow
       />
-      {/* Y axis - Green */}
-      <AxisArrow
-        from={[0, 0, 0]}
-        to={[0, 100, 0]}
-        color="#54FF87"
-        label="About"
-        labelDistance={1.25}
-        labelOffset={45} // <-- custom offset for Y
-      />
-      {/* Z axis - Blue */}
-      <AxisArrow
-        from={[0, 0, 0]}
-        to={[0, 0, 100]}
-        color="#8A9BFF"
-        label="Projects"
-        labelDistance={1.60}
-        labelOffset={50} // <-- custom offset for Z
-      />
-      {/* Grid helper */}
-      {/*
-      <Grid
-        position={[0, -0.5, 0]}
-        args={[10, 10]}
-        cellSize={1}
-        cellThickness={1}
-        cellColor="#6f6f6f"
-        sectionSize={5}
-        sectionThickness={1.5}
-        sectionColor="#737373"
-        fadeDistance={25}
-        fadeStrength={1}
-        infiniteGrid={true}
-      />
-      */}
-      {/* Lighting */}
-      <ambientLight intensity={1} />
-      <directionalLight position={[2.5, 10, 5]} intensity={1} />
+
+      <OrbitControls />
     </Canvas>
   );
 }
