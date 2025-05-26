@@ -2,7 +2,7 @@
 
 /* Color variables */
 :root {
-  --color-blue: #8A9BFF;
+  --color-blue: #3553ff;
   --color-red: #FF4141;
   --color-green: #54FF87;
   --color-background: #161616;
@@ -27,7 +27,8 @@ body {
   white-space: nowrap;
   cursor: pointer;
   -webkit-user-select: none;
-  user-select: none
+  user-select: none;
+  font-family: "vcrOsdMono";
 }
 
 h2 {
